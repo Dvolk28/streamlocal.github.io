@@ -1163,13 +1163,13 @@ nav.scrolled {
   
 <style>
 /* Mobile Accessibility Updates */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   /* Navbar */
   nav {
-    padding: 10px 16px;
-    gap: 10px;
+    padding: 10px 10px;
+    gap: 6px;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     position: fixed;
   }
   .logo {
@@ -1181,11 +1181,10 @@ nav.scrolled {
   }
   .nav-links {
     order: 3;
-    width: 100%;
-    justify-content: flex-start;
-    gap: 20px;
+    flex: 1 1 100%;
+    justify-content: space-between;
+    padding: 0 4px 5px 4px;
     margin-top: 5px;
-    padding-bottom: 5px;
   }
   .nav-search {
     width: auto;
@@ -1297,6 +1296,7 @@ nav.scrolled {
   .hero-overview {
     font-size: 14px;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
   }
 
   /* Layout & Carousels */
@@ -1377,6 +1377,12 @@ nav.scrolled {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .iframe-container {
+    flex: none;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: auto 0;
+  }
   .side-panel {
     width: 100%;
     max-width: 100%;
@@ -1428,8 +1434,7 @@ nav.scrolled {
 
 @media (max-width: 480px) {
   .logo {
-    font-size: 14px;
-    max-width: 55px;
+    font-size: 12px;
   }
   .hero-title {
     font-size: 26px;
