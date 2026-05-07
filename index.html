@@ -375,12 +375,22 @@ nav.scrolled {
   align-items: center;
   gap: 12px;
   padding: 10px;
+  min-height: 48px;
   cursor: pointer;
   border-bottom: 1px solid var(--muted);
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .sr-item:hover {
   background: var(--bg-solid);
+}
+
+.sr-item:active {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .sr-poster {
@@ -1166,8 +1176,8 @@ nav.scrolled {
 @media (max-width: 1024px) {
   /* Navbar */
   nav {
-    padding: 10px 10px;
-    gap: 6px;
+    padding: 10px 16px;
+    gap: 16px;
     flex-wrap: wrap;
     justify-content: flex-start;
     position: fixed;
@@ -1178,6 +1188,7 @@ nav.scrolled {
     max-width: 92px;
     line-height: 0.95;
     flex-shrink: 0;
+    text-align: center;
   }
   .nav-links {
     order: 3;
@@ -2009,10 +2020,13 @@ async function tmdb(path, params = {}) {
 }
 
 let searchTimeout;
+let isSearchResultInteraction = false;
 const searchInput = document.getElementById('search-input');
+const searchResultsEl = document.getElementById('search-results');
+
 searchInput.addEventListener('input', function () {
   clearTimeout(searchTimeout); const q = this.value.trim();
-  if (!q || q.length < 2) return document.getElementById('search-results').classList.remove('open');
+  if (!q || q.length < 2) return searchResultsEl.classList.remove('open');
   searchTimeout = setTimeout(() => doSearch(q), 300);
 });
 searchInput.addEventListener('keydown', function (e) {
@@ -2020,17 +2034,52 @@ searchInput.addEventListener('keydown', function (e) {
     const q = this.value.trim();
     if (q) {
       e.preventDefault();
-      document.getElementById('search-results').classList.remove('open');
+      searchResultsEl.classList.remove('open');
       this.blur();
       doFullSearch(q);
     }
   }
 });
-searchInput.addEventListener('blur', () => setTimeout(() => document.getElementById('search-results').classList.remove('open'), 200));
+searchInput.addEventListener('blur', () => {
+  // Only hide if not interacting with a search result
+  if (!isSearchResultInteraction) {
+    setTimeout(() => searchResultsEl.classList.remove('open'), 150);
+  }
+});
 searchInput.addEventListener('focus', function () {
   const q = this.value.trim();
   if (q && q.length >= 2) {
-    document.getElementById('search-results').classList.add('open');
+    searchResultsEl.classList.add('open');
+  }
+});
+
+// Prevent blur from firing when clicking/touching inside search results
+searchResultsEl.addEventListener('mousedown', function (e) {
+  e.preventDefault();
+});
+searchResultsEl.addEventListener('touchstart', function (e) {
+  isSearchResultInteraction = true;
+}, { passive: true });
+searchResultsEl.addEventListener('touchend', function (e) {
+  // Reset flag after a short delay to allow the click to process
+  setTimeout(() => { isSearchResultInteraction = false; }, 100);
+});
+
+// Event delegation for search result clicks — works reliably on both mobile and desktop
+searchResultsEl.addEventListener('click', function (e) {
+  const item = e.target.closest('.sr-item');
+  if (item && item.dataset.id && item.dataset.type) {
+    searchResultsEl.classList.remove('open');
+    searchInput.blur();
+    isSearchResultInteraction = false;
+    showDetails(parseInt(item.dataset.id), item.dataset.type);
+  }
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('.nav-search')) {
+    searchResultsEl.classList.remove('open');
   }
 });
 
@@ -2151,8 +2200,8 @@ async function doSearch(q) {
 
   r.innerHTML = data.results.filter(x => x.media_type === 'movie' || x.media_type === 'tv').slice(0, 10).map(item => {
     if (item.backdrop_path) queuePreload(item.backdrop_path);
-    return `<div class="sr-item" onclick="showDetails(${item.id}, '${item.media_type}')">
-      ${item.poster_path ? `<img class="sr-poster" src="${IMG}${item.poster_path}" />` : `<div class="sr-poster"></div>`}
+    return `<div class="sr-item" data-id="${item.id}" data-type="${item.media_type}">
+      ${item.poster_path ? `<img class="sr-poster" src="${IMG}${item.poster_path}" draggable="false" />` : `<div class="sr-poster"></div>`}
       <div class="sr-info">
         <div class="sr-title">${item.title || item.name}</div>
         <div class="sr-meta">${(item.release_date || item.first_air_date || '').slice(0, 4)} • ${item.media_type.toUpperCase()}</div>
