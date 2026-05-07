@@ -1160,6 +1160,164 @@ nav.scrolled {
 
 </style>
 
+  
+<style>
+/* Mobile Accessibility Updates */
+@media (max-width: 768px) {
+  /* Navbar */
+  nav {
+    padding: 10px 20px;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .logo {
+    font-size: 24px;
+  }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 20px;
+    margin-top: 5px;
+    padding-bottom: 5px;
+  }
+  .nav-search {
+    width: auto;
+    flex: 1;
+    max-width: 180px;
+  }
+  .nav-search input {
+    padding: 8px 12px 8px 32px;
+  }
+  .view {
+    padding-top: 120px !important;
+  }
+
+  /* Typography & Hero */
+  .hero {
+    height: auto;
+    min-height: 60vh;
+    padding: 0 20px;
+  }
+  .hero-content {
+    margin-top: 80px;
+    margin-bottom: 40px;
+  }
+  .hero-title {
+    font-size: 32px;
+  }
+  .hero-overview {
+    font-size: 14px;
+    -webkit-line-clamp: 3;
+  }
+
+  /* Layout & Carousels */
+  .row {
+    padding-left: 20px;
+  }
+  .row-title {
+    font-size: 18px;
+  }
+  .carousel {
+    padding-right: 20px;
+    gap: 8px;
+  }
+  
+  /* Modals */
+  .modal-overlay {
+    padding: 10px;
+  }
+  .modal-header {
+    padding: 20px;
+    min-height: 250px;
+    padding-top: 50px;
+  }
+  .modal-header-content h2 {
+    font-size: 26px !important;
+  }
+  .modal-body {
+    padding: 20px;
+  }
+  #actor-modal .modal-header {
+    flex-direction: column;
+    gap: 16px !important;
+    padding: 20px !important;
+    padding-top: 50px !important;
+    align-items: center !important;
+    text-align: center;
+  }
+  #actor-modal .modal-header img {
+    width: 120px !important;
+  }
+  #actor-bio {
+    padding-right: 0 !important;
+  }
+
+  /* Player */
+  .player-nav {
+    padding: 10px 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .player-title {
+    font-size: 16px;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .side-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Settings Grid */
+  .settings-container .settings-card .input-group {
+    flex-direction: column;
+  }
+  .settings-container .filter-bar {
+    padding-right: 0;
+  }
+  
+  /* View padding adjustment */
+  #view-watchlist, #view-search, #view-settings {
+    padding-top: 120px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 20px;
+  }
+  .nav-search {
+    max-width: 140px;
+  }
+  .hero-title {
+    font-size: 28px;
+  }
+  .eps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .player-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .panel-toggle {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  .modal-header-content h2 {
+    font-size: 22px !important;
+  }
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+</style>
+
 </head>
 
 <body>
