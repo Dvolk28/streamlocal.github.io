@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aether Local V2 — Premium Streaming</title>
+  <title>Stream Local — Premium Streaming</title>
   
 <style>
 :root {
@@ -1166,13 +1166,18 @@ nav.scrolled {
 @media (max-width: 768px) {
   /* Navbar */
   nav {
-    padding: 10px 20px;
+    padding: 10px 16px;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: space-between;
+    position: fixed;
   }
   .logo {
-    font-size: 24px;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+    max-width: 65px;
+    line-height: 1.15;
+    flex-shrink: 0;
   }
   .nav-links {
     order: 3;
@@ -1185,10 +1190,92 @@ nav.scrolled {
   .nav-search {
     width: auto;
     flex: 1;
-    max-width: 180px;
+    max-width: none;
+    position: static;
+    transition: none;
   }
   .nav-search input {
-    padding: 8px 12px 8px 32px;
+    padding: 8px 12px;
+  }
+  .nav-search .s-icon {
+    display: none;
+  }
+
+  /* Slide-down animation for search overlay */
+  @keyframes searchSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes searchTitleFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* On focus: full-width search overlay covers entire nav */
+  .nav-search:focus-within {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: rgba(8, 8, 12, 0.97);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    padding: 16px 16px 14px;
+    max-width: none;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: searchSlideDown 0.25s ease-out;
+  }
+  /* Branded title above the search input */
+  .nav-search:focus-within::before {
+    content: "Stream Local";
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent, #e50914);
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    animation: searchTitleFade 0.3s ease-out 0.1s both;
+  }
+  .nav-search:focus-within input {
+    width: 100%;
+    font-size: 16px;
+    padding: 12px 16px 12px 40px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+  }
+  .nav-search:focus-within .s-icon {
+    display: block;
+    left: 28px;
+    top: auto;
+    bottom: 26px;
+    transform: none;
+    font-size: 16px;
+  }
+  /* Break search dropdown out of narrow parent */
+  .search-results {
+    position: fixed !important;
+    top: auto !important;
+    left: 8px !important;
+    right: 8px !important;
+    width: auto !important;
+    max-height: 60vh;
+    z-index: 300;
+  }
+  /* When search is focused, push dropdown below the overlay */
+  .nav-search:focus-within .search-results {
+    top: 110px !important;
   }
   .view {
     padding-top: 120px !important;
@@ -1198,14 +1285,14 @@ nav.scrolled {
   .hero {
     height: auto;
     min-height: 60vh;
-    padding: 0 20px;
+    padding: 0 16px;
   }
   .hero-content {
     margin-top: 80px;
     margin-bottom: 40px;
   }
   .hero-title {
-    font-size: 32px;
+    font-size: 30px;
   }
   .hero-overview {
     font-size: 14px;
@@ -1214,16 +1301,39 @@ nav.scrolled {
 
   /* Layout & Carousels */
   .row {
-    padding-left: 20px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
   .row-title {
     font-size: 18px;
   }
   .carousel {
-    padding-right: 20px;
+    padding-right: 8px;
     gap: 8px;
   }
-  
+
+  /* Search / Watchlist grids — use full width */
+  #full-search-grid,
+  #watchlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+    padding-right: 0 !important;
+    gap: 10px !important;
+  }
+
+  /* Filter bar stacks vertically */
+  #view-search .settings-container {
+    padding: 0 8px;
+  }
+  .filter-bar {
+    flex-direction: column;
+    padding-right: 0 !important;
+  }
+  .filter-bar select,
+  .filter-bar input,
+  .filter-bar .btn {
+    width: 100%;
+  }
+
   /* Modals */
   .modal-overlay {
     padding: 10px;
@@ -1256,7 +1366,7 @@ nav.scrolled {
 
   /* Player */
   .player-nav {
-    padding: 10px 20px;
+    padding: 10px 16px;
     flex-wrap: wrap;
     gap: 10px;
   }
@@ -1272,14 +1382,44 @@ nav.scrolled {
     max-width: 100%;
   }
 
-  /* Settings Grid */
-  .settings-container .settings-card .input-group {
+  /* Settings — prevent horizontal overflow */
+  #view-settings {
+    overflow-x: hidden !important;
+  }
+  #view-settings .settings-container {
+    max-width: 100% !important;
+    padding: 0 16px;
+    overflow-x: hidden;
+  }
+  #view-settings .settings-container > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
+  .settings-card {
+    padding: 20px;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  .settings-card .input-group {
     flex-direction: column;
   }
   .settings-container .filter-bar {
     padding-right: 0;
   }
-  
+  /* Source add row — stack vertically */
+  .settings-card > div[style*="flex"][style*="gap: 8px"] {
+    flex-direction: column !important;
+  }
+  .settings-card > div[style*="flex"][style*="gap: 8px"] .input-base {
+    flex: none !important;
+    width: 100%;
+  }
+  /* Streaming Sources header */
+  .settings-card > div[style*="justify-content: space-between"] {
+    flex-direction: column !important;
+    gap: 12px;
+    align-items: flex-start !important;
+  }
+
   /* View padding adjustment */
   #view-watchlist, #view-search, #view-settings {
     padding-top: 120px !important;
@@ -1288,13 +1428,19 @@ nav.scrolled {
 
 @media (max-width: 480px) {
   .logo {
-    font-size: 20px;
-  }
-  .nav-search {
-    max-width: 140px;
+    font-size: 14px;
+    max-width: 55px;
   }
   .hero-title {
-    font-size: 28px;
+    font-size: 26px;
+  }
+  .media-card {
+    min-width: 110px !important;
+  }
+  #full-search-grid,
+  #watchlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+    gap: 8px !important;
   }
   .eps-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -1311,8 +1457,16 @@ nav.scrolled {
     font-size: 22px !important;
   }
   .btn {
-    padding: 10px 20px;
+    padding: 10px 18px;
     font-size: 14px;
+  }
+  /* Episode items in modal */
+  .modal-ep-item {
+    flex-direction: column !important;
+  }
+  .modal-ep-item > div[style*="width:120px"] {
+    width: 100% !important;
+    height: 140px !important;
   }
 }
 
@@ -1380,7 +1534,7 @@ nav.scrolled {
 
   <!-- NAV -->
   <nav id="navbar">
-    <div class="logo" onclick="switchView('home')">Æther</div>
+    <div class="logo" onclick="switchView('home')">Stream Local</div>
     <div class="nav-links">
       <a class="nav-link active" id="nav-home" onclick="switchView('home')">Home</a>
       <a class="nav-link" id="nav-watchlist" onclick="switchView('watchlist')">My List</a>
@@ -1468,7 +1622,7 @@ nav.scrolled {
     </div>
 
     <div style="text-align: center; padding: 40px 20px 20px; color: var(--muted); font-size: 12px; opacity: 0.7;">
-      Please note: Aether does not host any files itself but instead only display's content from 3rd party providers.
+      Please note: Stream Local does not host any files itself but instead only displays content from 3rd party providers.
       Legal issues should be taken up with the third parties.
     </div>
   </div>
@@ -1523,11 +1677,9 @@ nav.scrolled {
     <div class="settings-container" style="max-width: 900px; margin: 0 auto;">
       <h2 style="margin-bottom: 24px; font-size: 32px;">Settings</h2>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-
-        <div class="settings-card" style="margin-bottom: 0;">
+      <div class="settings-card">
           <h3>Appearance</h3>
-          <p>Customize the look and feel of Aether.</p>
+          <p>Customize the look and feel of Stream Local.</p>
           <div style="display: flex; gap: 12px; margin-top: 16px;">
             <div style="flex: 1;">
               <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">Theme Colors</label>
@@ -1542,35 +1694,11 @@ nav.scrolled {
               <select id="style-select" class="input-base" style="width: 100%;" onchange="setStyle(this.value)">
                 <option value="original">Classic</option>
                 <option value="modern">Glassy</option>
-                <option value="new">Redesign</option>
+                <option value="new">Redesign (Default)</option>
               </select>
             </div>
           </div>
         </div>
-
-        <div class="settings-card" style="margin-bottom: 0;">
-          <h3>Data Management</h3>
-          <p>Export or import your watch history, lists, and sources.</p>
-          <div style="display:flex; gap:12px; margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="exportProfile()" style="flex:1;">📥 Export Data</button>
-            <label class="btn btn-secondary" style="flex:1; cursor:pointer; text-align:center;">
-              📤 Import Data
-              <input type="file" style="display:none;" id="import-profile-input" accept=".json"
-                onchange="importProfile(event)" />
-            </label>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="settings-card" style="margin-top: 24px;">
-        <h3>API Configuration</h3>
-        <p>A TMDB API Key is required to fetch metadata. Get one for free at themoviedb.org.</p>
-        <div class="input-group" style="margin-top: 16px;">
-          <input id="tmdb-key-input" type="password" class="input-base" placeholder="Paste your v3 API Key here" />
-          <button class="btn btn-primary" onclick="saveTmdbKey()">Save</button>
-        </div>
-      </div>
 
       <div class="settings-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -1589,6 +1717,28 @@ nav.scrolled {
           <button class="btn btn-secondary" onclick="addCustomSource()">Add</button>
         </div>
       </div>
+
+      <div class="settings-card">
+        <h3>API Configuration</h3>
+        <p>A TMDB API Key is required to fetch metadata. Get one for free at themoviedb.org.</p>
+        <div class="input-group" style="margin-top: 16px;">
+          <input id="tmdb-key-input" type="password" class="input-base" placeholder="Paste your v3 API Key here" />
+          <button class="btn btn-primary" onclick="saveTmdbKey()">Save</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+          <h3>Data Management</h3>
+          <p>Export or import your watch history, lists, and sources.</p>
+          <div style="display:flex; gap:12px; margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="exportProfile()" style="flex:1;">📥 Export Data</button>
+            <label class="btn btn-secondary" style="flex:1; cursor:pointer; text-align:center;">
+              📤 Import Data
+              <input type="file" style="display:none;" id="import-profile-input" accept=".json"
+                onchange="importProfile(event)" />
+            </label>
+          </div>
+        </div>
 
     </div>
   </div>
@@ -1652,7 +1802,7 @@ nav.scrolled {
   
 <script>
 /* ===== STYLE & THEME SETUP ===== */
-const savedStyle = localStorage.getItem('aether_v2_style') || 'original';
+const savedStyle = localStorage.getItem('aether_v2_style') || 'new';
 document.documentElement.setAttribute('data-style', savedStyle);
 
 function setStyle(styleName) {
@@ -1807,7 +1957,7 @@ function exportProfile() {
   const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'Aether_Profile.json';
+  a.download = 'StreamLocal_Profile.json';
   a.click();
 }
 
@@ -2462,7 +2612,7 @@ function renderPlayerPanel() {
   const title = meta.title || meta.name;
   const titleText = title + (currentMedia.type === 'tv' ? ` - S${currentSeason} E${currentEp}` : '');
   document.getElementById('player-title').textContent = titleText;
-  document.title = titleText + " — Aether";
+  document.title = titleText + " — Stream Local";
 
   // Servers
   const servHtml = SOURCES.map((x, i) => `<button class="server-btn ${i === currentSrc ? 'active' : ''}" onclick="switchSource(${i})">${x.name}</button>`).join('');
@@ -2583,7 +2733,7 @@ function closePlayer() {
   clearTimeout(idleTimer);
   document.getElementById('player-iframe').src = '';
   document.body.style.overflow = '';
-  document.title = "Aether Local V2 — Premium Streaming";
+  document.title = "Stream Local — Premium Streaming";
 }
 
 function downloadSeasonBatch() {
