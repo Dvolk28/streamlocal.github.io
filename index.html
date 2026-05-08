@@ -541,6 +541,30 @@ nav.scrolled {
   color: #e5e5e5;
 }
 
+.row-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-right: 40px;
+  gap: 16px;
+}
+
+.row-header .row-title {
+  margin-bottom: 0;
+}
+
+.see-all-link {
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.see-all-link:hover {
+  color: var(--accent);
+}
+
 .carousel {
   display: flex;
   gap: 12px;
@@ -1765,12 +1789,12 @@ nav.scrolled {
   <div id="view-search" class="view" style="padding-top: 100px;">
     <div class="settings-container" style="max-width: 1200px; margin-bottom: 24px;">
       <div class="filter-bar">
-        <select id="filter-type" class="input-base" style="width: auto;">
+        <select id="filter-type" class="input-base" style="width: auto;" onchange="applySearchFilters(1)">
           <option value="">All Types</option>
           <option value="movie">Movies</option>
           <option value="tv">TV Shows</option>
         </select>
-        <select id="filter-genre" class="input-base" style="width: auto;">
+        <select id="filter-genre" class="input-base" style="width: auto;" onchange="applySearchFilters(1)">
           <option value="">All Genres</option>
           <option value="28">Action</option>
           <option value="35">Comedy</option>
@@ -1778,13 +1802,12 @@ nav.scrolled {
           <option value="878">Sci-Fi</option>
           <option value="16">Animation</option>
         </select>
-        <input id="filter-year" class="input-base" placeholder="Year" style="width: 80px;" type="number" />
-        <select id="filter-sort" class="input-base" style="width: auto;">
+        <input id="filter-year" class="input-base" placeholder="Year" style="width: 80px;" type="number" onchange="applySearchFilters(1)" />
+        <select id="filter-sort" class="input-base" style="width: auto;" onchange="applySearchFilters(1)">
           <option value="popularity.desc">Most Popular</option>
           <option value="vote_average.desc">Highest Rated</option>
           <option value="primary_release_date.desc">Newest</option>
         </select>
-        <button class="btn btn-primary" onclick="applySearchFilters()">Apply Filters</button>
       </div>
     </div>
     <div class="row">
@@ -2141,12 +2164,28 @@ searchInput.addEventListener('input', function () {
 });
 searchInput.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
+    e.preventDefault();
+    searchResultsEl.classList.remove('open');
+    this.blur();
+    
+    // Reset filters
+    const filterType = document.getElementById('filter-type');
+    const filterGenre = document.getElementById('filter-genre');
+    const filterSort = document.getElementById('filter-sort');
+    const filterYear = document.getElementById('filter-year');
+    
+    if (filterType) filterType.value = '';
+    if (filterGenre) filterGenre.value = '';
+    if (filterSort) filterSort.value = 'popularity.desc';
+    if (filterYear) filterYear.value = '';
+
     const q = this.value.trim();
     if (q) {
-      e.preventDefault();
-      searchResultsEl.classList.remove('open');
-      this.blur();
       doFullSearch(q);
+    } else {
+      switchView('search');
+      document.getElementById('full-search-title').textContent = 'Discover';
+      applySearchFilters(1);
     }
   }
 });
@@ -2193,8 +2232,15 @@ document.addEventListener('click', function (e) {
   }
 });
 
-async function applySearchFilters() {
+let currentSearchPage = 1;
+let isSearching = false;
+let infiniteScrollObserver = null;
+
+async function applySearchFilters(page = 1) {
   if (!TMDB_KEY) return alert('API Key required.');
+  if (isSearching) return;
+  isSearching = true;
+
   const q = document.getElementById('search-input').value.trim();
   const type = document.getElementById('filter-type').value;
   const genre = document.getElementById('filter-genre').value;
@@ -2202,15 +2248,28 @@ async function applySearchFilters() {
   const sort = document.getElementById('filter-sort').value;
 
   const grid = document.getElementById('full-search-grid');
-  grid.innerHTML = '<div style="color:var(--muted); padding-left:40px;">Loading...</div>';
+  
+  if (page === 1) {
+    grid.innerHTML = '<div style="color:var(--muted); padding-left:40px;">Loading...</div>';
+    currentSearchPage = 1;
+    removeInfiniteScroll();
+  }
 
   let endpoint = '/search/multi';
-  let params = { query: q, include_adult: false };
+  let params = { query: q, include_adult: false, page: page };
 
   if (!q) {
     endpoint = type === 'tv' ? '/discover/tv' : '/discover/movie';
-    params = { sort_by: sort };
-    if (genre) params.with_genres = genre;
+    params = { sort_by: sort, page: page };
+    
+    // Fix genre mapping for TV shows
+    let mappedGenre = genre;
+    if (type === 'tv' && genre) {
+      if (genre === '28') mappedGenre = '10759'; // Action & Adventure
+      if (genre === '878') mappedGenre = '10765'; // Sci-Fi & Fantasy
+    }
+    if (mappedGenre) params.with_genres = mappedGenre;
+    
     if (year) {
       if (type === 'tv') params.first_air_date_year = year;
       else params.primary_release_year = year;
@@ -2218,9 +2277,11 @@ async function applySearchFilters() {
   }
 
   const data = await tmdb(endpoint, params);
-  grid.innerHTML = '';
+  if (page === 1) grid.innerHTML = '';
+  isSearching = false;
+
   if (!data || !data.results || data.results.length === 0) {
-    grid.innerHTML = '<div style="color:var(--muted); padding-left:40px;">No results.</div>';
+    if (page === 1) grid.innerHTML = '<div style="color:var(--muted); padding-left:40px;">No results.</div>';
     return;
   }
 
@@ -2235,7 +2296,7 @@ async function applySearchFilters() {
     });
   }
 
-  if (results.length === 0) {
+  if (results.length === 0 && page === 1) {
     grid.innerHTML = '<div style="color:var(--muted); padding-left:40px;">No results match filters.</div>';
     return;
   }
@@ -2258,45 +2319,49 @@ async function applySearchFilters() {
     grid.appendChild(card);
   });
   triggerPreload();
+
+  if (data.page < data.total_pages) {
+    setupInfiniteScroll();
+  } else {
+    removeInfiniteScroll();
+  }
+}
+
+function setupInfiniteScroll() {
+  const grid = document.getElementById('full-search-grid');
+  let sentinel = document.getElementById('infinite-scroll-sentinel');
+  if (!sentinel) {
+    sentinel = document.createElement('div');
+    sentinel.id = 'infinite-scroll-sentinel';
+    sentinel.style.width = '100%';
+    sentinel.style.height = '20px';
+    grid.parentNode.appendChild(sentinel);
+  }
+  
+  if (!infiniteScrollObserver) {
+    infiniteScrollObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !isSearching) {
+        currentSearchPage++;
+        applySearchFilters(currentSearchPage);
+      }
+    }, { rootMargin: '400px' });
+  }
+  infiniteScrollObserver.observe(sentinel);
+}
+
+function removeInfiniteScroll() {
+  const sentinel = document.getElementById('infinite-scroll-sentinel');
+  if (sentinel && infiniteScrollObserver) {
+    infiniteScrollObserver.unobserve(sentinel);
+  }
 }
 
 async function doFullSearch(q) {
   if (!TMDB_KEY) return alert('API Key required for search.');
   switchView('search');
+  document.getElementById('search-input').value = q;
   document.getElementById('full-search-title').textContent = `Search Results for "${q}"`;
-  const grid = document.getElementById('full-search-grid');
-  grid.innerHTML = '<div style="color:var(--muted); padding-left:40px;">Searching...</div>';
-
-  const data = await tmdb('/search/multi', { query: q, include_adult: false });
-  grid.innerHTML = '';
-  if (!data || !data.results || data.results.length === 0) {
-    grid.innerHTML = '<div style="color:var(--muted); padding-left:40px;">No results found.</div>';
-    return;
-  }
-
-  const results = data.results.filter(x => x.media_type === 'movie' || x.media_type === 'tv');
-  if (results.length === 0) {
-    grid.innerHTML = '<div style="color:var(--muted); padding-left:40px;">No valid media found.</div>';
-    return;
-  }
-
-  results.forEach(item => {
-    if (!item.poster_path) return;
-    if (item.backdrop_path) queuePreload(item.backdrop_path);
-    const card = document.createElement('div');
-    card.className = 'media-card';
-    card.style.flex = 'none';
-    card.style.minWidth = '0';
-    card.onclick = () => showDetails(item.id, item.media_type);
-    card.innerHTML = `
-      <img src="${IMG + item.poster_path}" loading="lazy"/>
-      <div class="card-info">
-        <div class="card-title">${item.title || item.name}</div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-  triggerPreload();
+  applySearchFilters(1);
 }
 
 async function doSearch(q) {
@@ -2321,6 +2386,48 @@ async function doSearch(q) {
   r.classList.add('open');
   triggerPreload();
 }
+
+window.browseCategory = function(category, extra) {
+  if (!TMDB_KEY) return alert('API Key required.');
+  switchView('search');
+  
+  const searchInputEl = document.getElementById('search-input');
+  if (searchInputEl) searchInputEl.value = '';
+  
+  const filterType = document.getElementById('filter-type');
+  const filterGenre = document.getElementById('filter-genre');
+  const filterSort = document.getElementById('filter-sort');
+  const filterYear = document.getElementById('filter-year');
+  
+  if (filterType) filterType.value = '';
+  if (filterGenre) filterGenre.value = '';
+  if (filterSort) filterSort.value = 'popularity.desc';
+  if (filterYear) filterYear.value = '';
+  
+  let title = 'Browse';
+  
+  if (category === 'trending') {
+    title = 'Trending Now';
+  } else if (category === 'movies') {
+    title = 'Popular Movies';
+    if (filterType) filterType.value = 'movie';
+  } else if (category === 'tv') {
+    title = 'Popular TV Shows';
+    if (filterType) filterType.value = 'tv';
+  } else if (category === 'genre') {
+    if (filterGenre) filterGenre.value = extra || '';
+    if (filterType) filterType.value = 'movie';
+    if (extra === '28') title = 'Action Thrillers';
+    else if (extra === '878') title = 'Sci-Fi & Fantasy';
+    else if (extra === '35') title = 'Comedy';
+    else title = 'Genre Results';
+  }
+  
+  const titleEl = document.getElementById('full-search-title');
+  if (titleEl) titleEl.textContent = title;
+  
+  applySearchFilters();
+};
 
 </script>
 
