@@ -3202,6 +3202,8 @@ function loadEmbed() {
     absorber.style.inset = '0';
     absorber.style.zIndex = '9999';
     absorber.style.cursor = 'pointer';
+    // Mobile quirk fix: completely transparent empty divs sometimes let touch events fall through.
+    absorber.style.background = 'rgba(0,0,0,0.01)';
     
     // 111Movies is notorious for double-layered popup ads, so we absorb 2 clicks for it.
     let clicksToAbsorb = (src.name.toLowerCase().includes('111movies')) ? 2 : 1;
@@ -3209,7 +3211,10 @@ function loadEmbed() {
     
     const handleInteraction = (e) => {
       e.stopPropagation();
-      if (e.type === 'click') {
+      // On mobile, preventing default on touchend stops the browser from firing a subsequent click event.
+      if (e.cancelable) e.preventDefault();
+      
+      if (e.type === 'click' || e.type === 'touchend') {
         clicksAbsorbed++;
         if (clicksAbsorbed >= clicksToAbsorb) {
           absorber.remove();
@@ -3218,10 +3223,10 @@ function loadEmbed() {
     };
 
     absorber.addEventListener('click', handleInteraction);
+    absorber.addEventListener('touchend', handleInteraction, {passive: false});
+    absorber.addEventListener('touchstart', (e) => e.stopPropagation(), {passive: true});
     absorber.addEventListener('mousedown', (e) => e.stopPropagation());
     absorber.addEventListener('mouseup', (e) => e.stopPropagation());
-    absorber.addEventListener('touchstart', (e) => e.stopPropagation(), {passive: true});
-    absorber.addEventListener('touchend', (e) => e.stopPropagation(), {passive: true});
     
     host.shadowRoot.appendChild(absorber);
   }
