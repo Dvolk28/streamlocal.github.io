@@ -1964,7 +1964,7 @@ nav.scrolled {
         <h3>API Configuration</h3>
         <p>A TMDB API Key is required to fetch metadata. Get one for free at themoviedb.org.</p>
         <div class="input-group" style="margin-top: 16px;">
-          <input id="tmdb-key-input" type="password" class="input-base" placeholder="Paste your v3 API Key here" />
+          <input id="tmdb-key-input" type="text" style="-webkit-text-security: disc;" autocomplete="off" spellcheck="false" class="input-base" placeholder="Paste your v3 API Key here" />
           <button class="btn btn-primary" onclick="saveTmdbKey()">Save</button>
         </div>
       </div>
@@ -2181,9 +2181,9 @@ const IMG = 'https://image.tmdb.org/t/p/w300';
 const IMG_BG = 'https://image.tmdb.org/t/p/original';
 
 const DEFAULT_SOURCES = [
-  { name: 'VidEasy', movie: 'https://player.videasy.net/movie/{id}', tv: 'https://player.videasy.net/tv/{id}/{s}/{e}' },
-  { name: 'VidSrc CC', movie: 'https://vidsrc.cc/v2/embed/movie/{id}', tv: 'https://vidsrc.cc/v2/embed/tv/{id}/{s}/{e}' },
-  { name: '111Movies <small style="font-size: 11px; opacity: 0.7;">(may have pop up ads)</small>', movie: 'https://111movies.net/movie/{id}', tv: 'https://111movies.net/tv/{id}/{s}/{e}' }
+  { name: 'VidEasy', movie: 'https://player.videasy.net/movie/{id}?autoplay=1', tv: 'https://player.videasy.net/tv/{id}/{s}/{e}?autoplay=1' },
+  { name: 'VidSrc CC', movie: 'https://vidsrc.cc/v2/embed/movie/{id}?autoPlay=true', tv: 'https://vidsrc.cc/v2/embed/tv/{id}/{s}/{e}?autoPlay=true' },
+  { name: '111Movies <small style="font-size: 11px; opacity: 0.7;">(may have pop up ads)</small>', movie: 'https://111movies.net/movie/{id}?autoplay=1', tv: 'https://111movies.net/tv/{id}/{s}/{e}?autoplay=1' }
 ];
 
 let SOURCES = [];
@@ -2241,7 +2241,7 @@ function resetIdleTimer() {
 
 /* ===== SOURCES MANAGEMENT ===== */
 function loadSources() {
-  const stored = localStorage.getItem('aether_v3_sources');
+  const stored = localStorage.getItem('aether_v4_sources');
   if (stored) {
     try { SOURCES = JSON.parse(stored); } catch (e) { SOURCES = [...DEFAULT_SOURCES]; }
   } else {
@@ -2252,7 +2252,7 @@ function loadSources() {
 }
 
 function saveSources() {
-  localStorage.setItem('aether_v3_sources', JSON.stringify(SOURCES));
+  localStorage.setItem('aether_v4_sources', JSON.stringify(SOURCES));
   renderSourceSettings();
 }
 
@@ -2307,7 +2307,7 @@ function resetSources() {
 function exportProfile() {
   const data = {
     tmdb_key: localStorage.getItem('tmdb_key'),
-    aether_v3_sources: localStorage.getItem('aether_v3_sources'),
+    aether_v4_sources: localStorage.getItem('aether_v4_sources'),
     aether_v2_history: localStorage.getItem('aether_v2_history'),
     aether_v2_watchlist: localStorage.getItem('aether_v2_watchlist'),
     aether_v2_last_source: localStorage.getItem('aether_v2_last_source')
@@ -2327,8 +2327,8 @@ function importProfile(e) {
     try {
       const data = JSON.parse(ev.target.result);
       if (data.tmdb_key) localStorage.setItem('tmdb_key', data.tmdb_key);
-      if (data.aether_v3_sources) localStorage.setItem('aether_v3_sources', data.aether_v3_sources);
-      else if (data.aether_v2_sources) localStorage.setItem('aether_v3_sources', data.aether_v2_sources); // Migration
+      if (data.aether_v4_sources) localStorage.setItem('aether_v4_sources', data.aether_v4_sources);
+      else if (data.aether_v3_sources) localStorage.setItem('aether_v4_sources', data.aether_v3_sources); // Migration
       if (data.aether_v2_history) localStorage.setItem('aether_v2_history', data.aether_v2_history);
       if (data.aether_v2_watchlist) localStorage.setItem('aether_v2_watchlist', data.aether_v2_watchlist);
       if (data.aether_v2_last_source) localStorage.setItem('aether_v2_last_source', data.aether_v2_last_source);
@@ -3184,52 +3184,12 @@ function loadEmbed() {
 
   const iframe = getPlayerIframe();
   document.getElementById('embed-loading').style.display = 'flex';
-  document.getElementById('embed-status').textContent = `Connecting to ${src.name}...`;
-  
-  // Load directly without sandbox to avoid detection, but with protection layers
+  // Load directly without sandbox to avoid detection.
+  // Warning: Without sandbox, cross-origin iframes CAN open popups when clicked.
   if (iframe) iframe.removeAttribute('sandbox');
   if (iframe) iframe.src = url;
 
-  // Add an invisible click absorber over the iframe to eat the first clicks (which trigger ads)
-  const host = document.getElementById('player-iframe-host');
-  if (host && host.shadowRoot) {
-    let absorber = host.shadowRoot.getElementById('invisible-absorber');
-    if (absorber) absorber.remove(); // Reset absorber for new source
-    
-    absorber = document.createElement('div');
-    absorber.id = 'invisible-absorber';
-    absorber.style.position = 'absolute';
-    absorber.style.inset = '0';
-    absorber.style.zIndex = '9999';
-    absorber.style.cursor = 'pointer';
-    // Mobile quirk fix: completely transparent empty divs sometimes let touch events fall through.
-    absorber.style.background = 'rgba(0,0,0,0.01)';
-    
-    // 111Movies is notorious for double-layered popup ads, so we absorb 2 clicks for it.
-    let clicksToAbsorb = (src.name.toLowerCase().includes('111movies')) ? 2 : 1;
-    let clicksAbsorbed = 0;
-    
-    const handleInteraction = (e) => {
-      e.stopPropagation();
-      // On mobile, preventing default on touchend stops the browser from firing a subsequent click event.
-      if (e.cancelable) e.preventDefault();
-      
-      if (e.type === 'click' || e.type === 'touchend') {
-        clicksAbsorbed++;
-        if (clicksAbsorbed >= clicksToAbsorb) {
-          absorber.remove();
-        }
-      }
-    };
 
-    absorber.addEventListener('click', handleInteraction);
-    absorber.addEventListener('touchend', handleInteraction, {passive: false});
-    absorber.addEventListener('touchstart', (e) => e.stopPropagation(), {passive: true});
-    absorber.addEventListener('mousedown', (e) => e.stopPropagation());
-    absorber.addEventListener('mouseup', (e) => e.stopPropagation());
-    
-    host.shadowRoot.appendChild(absorber);
-  }
 
   clearTimeout(failoverTimer);
   // When iframe loads: hide spinner
