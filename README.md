@@ -22,17 +22,15 @@ Stream Local is a premium, highly customizable web interface for discovering and
 Stream Local runs entirely in your browser. No server setup or installation is required! 
 
 1. Go to the [Live Site](https://streamlocal.github.io/).
-2. **Set up TMDB (Required for Metadata):** * To see movie and TV show posters, descriptions, and search results, you need a free API key from [The Movie Database (TMDB)](https://www.themoviedb.org/).
-   * Navigate to **Settings** in the Stream Local app and paste your TMDB v3 API Key under "API Configuration".
-3. **Configure Streaming Sources (Optional):**
+2. **Configure Streaming Sources (Optional):**
    * The app comes with default 3rd-party providers. You can manage these or add your own custom video server templates in the Settings menu.
-4. **Search and Watch:** Use the search bar to find content or browse the trending/popular carousels on the homepage.
+3. **Search and Watch:** Use the search bar to find content or browse the trending/popular carousels on the homepage.
 
 ## ⚙️ How It Works
 
 This project is a static single-page application (SPA) contained entirely within `index.html`. It utilizes plain HTML, CSS, and Vanilla JavaScript. 
 
-* **Metadata:** Fetched via the TMDB API.
+* **Metadata:** Fetched via TMDB API.
 * **Video Playback:** Handled by dynamically embedding third-party host URLs into an iframe.
 * **Storage:** All watchlists, history, and settings are saved locally to your browser's `localStorage`.
 
