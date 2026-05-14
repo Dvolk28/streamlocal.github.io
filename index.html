@@ -4,22 +4,23 @@
 <head>
   <!-- 1. Freeze Window Object to prevent popup scripts from overriding our blocks -->
   <script>
-    (function() {
-        const block = {
-            get: () => { 
-                return function Blocked_popup() { 
-                    console.warn("Blocked a popup attempt."); 
-                    return null; 
-                }; 
-            },
-            set: () => { /* Do nothing, preventing re-assignment */ }
-        };
-        Object.defineProperty(window, 'open', block);
-        Object.defineProperty(window, 'onbeforeunload', block);
+    (function () {
+      const block = {
+        get: () => {
+          return function Blocked_popup() {
+            console.warn("Blocked a popup attempt.");
+            return null;
+          };
+        },
+        set: () => { /* Do nothing, preventing re-assignment */ }
+      };
+      Object.defineProperty(window, 'open', block);
+      Object.defineProperty(window, 'onbeforeunload', block);
     })();
   </script>
   <!-- 2. Content Security Policy (CSP) -->
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://api.themoviedb.org https://api.allorigins.win https://yts.mx https://eztvx.to https://apibay.org; worker-src 'none'; object-src 'none';">
+  <meta http-equiv="Content-Security-Policy"
+    content="script-src 'self' 'unsafe-inline' https://api.themoviedb.org https://api.allorigins.win; worker-src 'none'; object-src 'none';">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stream Local — Premium Streaming</title>
@@ -1747,9 +1748,12 @@ nav.scrolled {
   </div>
 
   <!-- DOWNLOAD MODAL -->
-  <div id="download-modal" class="modal-overlay" onclick="if(event.target === this) document.getElementById('download-modal').classList.remove('open')" style="z-index: 3000;">
+  <div id="download-modal" class="modal-overlay"
+    onclick="if(event.target === this) document.getElementById('download-modal').classList.remove('open')"
+    style="z-index: 3000;">
     <div class="modal-content" style="max-width: 700px; padding: 24px;">
-      <button class="modal-close" onclick="document.getElementById('download-modal').classList.remove('open')">&times;</button>
+      <button class="modal-close"
+        onclick="document.getElementById('download-modal').classList.remove('open')">&times;</button>
       <h2 style="margin-bottom: 4px; font-size: 22px;">📥 Download (BETA)</h2>
       <div id="download-options" style="margin-top: 16px;">
         <div class="spinner" style="margin: 0 auto;"></div>
@@ -1865,7 +1869,8 @@ nav.scrolled {
     </div>
 
     <div style="text-align: center; padding: 40px 20px 20px; color: var(--muted); font-size: 12px; opacity: 0.7;">
-      Please note: Stream Local does not host any files itself but instead only displays content from 3rd party providers.
+      Please note: Stream Local does not host any files itself but instead only displays content from 3rd party
+      providers.
       Legal issues should be taken up with the third parties.
     </div>
   </div>
@@ -1898,7 +1903,8 @@ nav.scrolled {
           <option value="878">Sci-Fi</option>
           <option value="16">Animation</option>
         </select>
-        <input id="filter-year" class="input-base" placeholder="Year" style="width: 80px;" type="number" onchange="applySearchFilters(1)" />
+        <input id="filter-year" class="input-base" placeholder="Year" style="width: 80px;" type="number"
+          onchange="applySearchFilters(1)" />
         <select id="filter-sort" class="input-base" style="width: auto;" onchange="applySearchFilters(1)">
           <option value="popularity.desc">Most Popular</option>
           <option value="vote_average.desc">Highest Rated</option>
@@ -1920,27 +1926,27 @@ nav.scrolled {
       <h2 style="margin-bottom: 24px; font-size: 32px;">Settings</h2>
 
       <div class="settings-card">
-          <h3>Appearance</h3>
-          <p>Customize the look and feel of Stream Local.</p>
-          <div style="display: flex; gap: 12px; margin-top: 16px;">
-            <div style="flex: 1;">
-              <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">Theme Colors</label>
-              <select id="theme-select" class="input-base" style="width: 100%;" onchange="setTheme(this.value)">
-                <option value="dark">Dark (Default)</option>
-                <option value="light">Light</option>
-                <option value="chill">Chill</option>
-              </select>
-            </div>
-            <div style="flex: 1;">
-              <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">UI Style</label>
-              <select id="style-select" class="input-base" style="width: 100%;" onchange="setStyle(this.value)">
-                <option value="original">Classic</option>
-                <option value="modern">Glassy</option>
-                <option value="new">Redesign (Default)</option>
-              </select>
-            </div>
+        <h3>Appearance</h3>
+        <p>Customize the look and feel of Stream Local.</p>
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+          <div style="flex: 1;">
+            <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">Theme Colors</label>
+            <select id="theme-select" class="input-base" style="width: 100%;" onchange="setTheme(this.value)">
+              <option value="dark">Dark (Default)</option>
+              <option value="light">Light</option>
+              <option value="chill">Chill</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label style="display:block; font-size:12px; color:var(--muted); margin-bottom:4px;">UI Style</label>
+            <select id="style-select" class="input-base" style="width: 100%;" onchange="setStyle(this.value)">
+              <option value="original">Classic</option>
+              <option value="modern">Glassy</option>
+              <option value="new">Redesign (Default)</option>
+            </select>
           </div>
         </div>
+      </div>
 
       <div class="settings-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -1964,23 +1970,24 @@ nav.scrolled {
         <h3>API Configuration</h3>
         <p>A TMDB API Key is required to fetch metadata. Get one for free at themoviedb.org.</p>
         <div class="input-group" style="margin-top: 16px;">
-          <input id="tmdb-key-input" type="text" style="-webkit-text-security: disc;" autocomplete="off" spellcheck="false" class="input-base" placeholder="Paste your v3 API Key here" />
+          <input id="tmdb-key-input" type="text" style="-webkit-text-security: disc;" autocomplete="off"
+            spellcheck="false" class="input-base" placeholder="Paste your v3 API Key here" />
           <button class="btn btn-primary" onclick="saveTmdbKey()">Save</button>
         </div>
       </div>
 
       <div class="settings-card">
-          <h3>Data Management</h3>
-          <p>Export or import your watch history, lists, and sources.</p>
-          <div style="display:flex; gap:12px; margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="exportProfile()" style="flex:1;">📥 Export Data</button>
-            <label class="btn btn-secondary" style="flex:1; cursor:pointer; text-align:center;">
-              📤 Import Data
-              <input type="file" style="display:none;" id="import-profile-input" accept=".json"
-                onchange="importProfile(event)" />
-            </label>
-          </div>
+        <h3>Data Management</h3>
+        <p>Export or import your watch history, lists, and sources.</p>
+        <div style="display:flex; gap:12px; margin-top: 16px;">
+          <button class="btn btn-secondary" onclick="exportProfile()" style="flex:1;">📥 Export Data</button>
+          <label class="btn btn-secondary" style="flex:1; cursor:pointer; text-align:center;">
+            📤 Import Data
+            <input type="file" style="display:none;" id="import-profile-input" accept=".json"
+              onchange="importProfile(event)" />
+          </label>
         </div>
+      </div>
 
     </div>
   </div>
@@ -3073,7 +3080,7 @@ function getPlayerIframe() {
   const host = document.getElementById('player-iframe-host');
   if (!host) return null;
   const shadow = host.attachShadow({ mode: 'closed' });
-  
+
   shadowIframe = document.createElement('iframe');
   shadowIframe.id = 'player-iframe';
   shadowIframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
@@ -3082,7 +3089,7 @@ function getPlayerIframe() {
   shadowIframe.style.height = '100%';
   shadowIframe.style.border = 'none';
   shadowIframe.style.backgroundColor = '#000';
-  
+
   shadow.appendChild(shadowIframe);
   return shadowIframe;
 }
@@ -3205,7 +3212,32 @@ function loadEmbed() {
 }
 
 
+// God-Mode Ad Blocker (Requires Launch.bat Unlocked Mode)
+// If web security is disabled, we have full cross-origin access to the iframe's internals.
+const godModeTimer = setInterval(() => {
+  try {
+    const frameWin = iframe.contentWindow;
+    if (frameWin) {
+      // Attempting to access frameWin.document throws a DOMException if security is active.
+      const doc = frameWin.document;
 
+      // If we reach here, God-Mode is active! Nuke the iframe's ability to open popups.
+      if (!frameWin._streamLocalGodMode) {
+        frameWin.open = function (url, name, specs) {
+          console.log('[Stream Local] God-Mode annihilated popup attempt:', url);
+          return null;
+        };
+        frameWin._streamLocalGodMode = true;
+        console.log('[Stream Local] God-Mode applied to iframe successfully.');
+      }
+    }
+  } catch (e) {
+    // Standard browser security is blocking access. God-Mode is inactive.
+  }
+}, 1000);
+
+// Attach timer to iframe so we can clear it later if needed (optional)
+iframe._godModeTimer = godModeTimer;
 function switchSource(idx) {
   currentSrc = idx;
   if (SOURCES[idx]) {
@@ -3279,20 +3311,19 @@ function closePlayer() {
 
 function downloadSeasonBatch() {
   if (currentMedia.type !== 'tv') return;
-  const srcObj = SOURCES[currentSrc];
   const sData = allSeasons.find(s => s.season_number === currentSeason);
   const count = sData ? sData.episode_count : parseInt(prompt("How many episodes to generate?", "24")) || 24;
 
   let batch = "";
   for (let i = 1; i <= count; i++) {
-    const url = buildStreamUrl(srcObj, 'tv', currentMedia.id, currentSeason, i);
-    if (url) batch += url + "\n";
+    const url = `https://vidvault.ru/tv/${currentMedia.id}/${currentSeason}/${i}`;
+    batch += url + "\n";
   }
 
   const blob = new Blob([batch], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `${(currentMedia.meta.name || 'Show').replace(/\s+/g, '_')}_S${currentSeason}_Batch.txt`;
+  a.download = `${(currentMedia.meta.name || 'Show').replace(/\s+/g, '_')}_S${currentSeason}_VidVault_Batch.txt`;
   a.click();
 }
 
@@ -3305,131 +3336,28 @@ async function openDownloadModal() {
   const modal = document.getElementById('download-modal');
   const optionsContainer = document.getElementById('download-options');
   modal.classList.add('open');
-  optionsContainer.innerHTML = '<div class="spinner" style="margin: 0 auto;"></div><div style="font-size:14px; margin-top:10px; color:var(--muted);">This may take a minute as this feature is still highly in development. Do not be surprised if it does not work. </div>';
+  optionsContainer.innerHTML = '<div class="spinner" style="margin: 0 auto;"></div><div style="font-size:14px; margin-top:10px; color:var(--muted);">Loading download options...</div>';
 
   try {
-    let imdbId = currentMedia.meta.imdb_id;
-    if (!imdbId) {
-      const ext = await tmdb('/' + currentMedia.type + '/' + currentMedia.id + '/external_ids');
-      if (ext && ext.imdb_id) imdbId = ext.imdb_id;
-    }
-
     const title = currentMedia.meta.title || currentMedia.meta.name || '';
     const type = currentMedia.type;
-    let downloadLinks = [];
+    const id = currentMedia.id;
 
-    // MOVIES: YTS (via CORS proxy)
-    if (type === 'movie' && imdbId) {
-      try {
-        const data = await corsProxy('https://yts.mx/api/v2/list_movies.json?query_term=' + imdbId);
-        if (data && data.data && data.data.movies && data.data.movies.length > 0) {
-          const movie = data.data.movies[0];
-          if (movie.torrents) {
-            movie.torrents.forEach(function (t) {
-              const magnet = 'magnet:?xt=urn:btih:' + t.hash + '&dn=' + encodeURIComponent(movie.title) + '&tr=udp://tracker.opentrackr.org:1337/announce&tr=udp://tracker.coppersurfer.tk:6969';
-              downloadLinks.push({ quality: t.quality, size: t.size, seeds: t.seeds || 0, magnet: magnet });
-            });
-          }
-        }
-      } catch (e) { console.warn('YTS:', e); }
+    let vidvaultUrl = '';
+    if (type === 'movie') {
+      vidvaultUrl = `https://vidvault.ru/movie/${id}`;
+    } else if (type === 'tv') {
+      vidvaultUrl = `https://vidvault.ru/tv/${id}/${currentSeason}/${currentEp}`;
     }
 
-    // TV: EZTV (via CORS proxy)
-    if (type === 'tv' && imdbId) {
-      try {
-        const cleanImdb = imdbId.replace('tt', '');
-        const data = await corsProxy('https://eztvx.to/api/get-torrents?imdb_id=' + cleanImdb + '&limit=100&page=1');
-        if (data && data.torrents) {
-          let allTorrents = data.torrents;
-          const totalPages = Math.ceil((data.torrents_count || 0) / 100);
-          if (totalPages > 1) {
-            for (let p = 2; p <= Math.min(totalPages, 5); p++) {
-              try {
-                const extra = await corsProxy('https://eztvx.to/api/get-torrents?imdb_id=' + cleanImdb + '&limit=100&page=' + p);
-                if (extra && extra.torrents) allTorrents = allTorrents.concat(extra.torrents);
-              } catch (e) { }
-            }
-          }
-          allTorrents.filter(function (t) {
-            return parseInt(t.season) == currentSeason && parseInt(t.episode) == currentEp;
-          }).forEach(function (t) {
-            var quality = '480p';
-            var n = t.title || '';
-            if (n.includes('2160p') || n.toLowerCase().includes('4k')) quality = '4K';
-            else if (n.includes('1080p')) quality = '1080p';
-            else if (n.includes('720p')) quality = '720p';
-            var sizeMB = (parseInt(t.size_bytes) / (1024 * 1024)).toFixed(0) + ' MB';
-            downloadLinks.push({ quality: quality, size: sizeMB, seeds: t.seeds || 0, magnet: t.magnet_url });
-          });
-        }
-      } catch (e) { console.warn('EZTV:', e); }
-    }
+    const epLabel = type === 'tv' ? ` — S${currentSeason} E${currentEp}` : '';
 
-    // FALLBACK: APIBay search by title (via CORS proxy)
-    if (downloadLinks.length === 0 && title) {
-      try {
-        var cleanTitle = title.replace(/[^\w\s]/gi, '').trim().replace(/\s+/g, '+');
-        var query = type === 'movie'
-          ? cleanTitle + '+' + (currentMedia.meta.release_date || '').substring(0, 4)
-          : cleanTitle + '+s' + String(currentSeason).padStart(2, '0') + 'e' + String(currentEp).padStart(2, '0');
-        var data = await corsProxy('https://apibay.org/q.php?q=' + query);
-        if (Array.isArray(data) && data.length > 0 && data[0].id !== '0') {
-          data.slice(0, 30).forEach(function (t) {
-            var quality = '480p';
-            var n = (t.name || '').toLowerCase();
-            if (n.includes('2160p') || n.includes('4k')) quality = '4K';
-            else if (n.includes('1080p')) quality = '1080p';
-            else if (n.includes('720p')) quality = '720p';
-            var sizeMB = (parseInt(t.size) / (1024 * 1024)).toFixed(0) + ' MB';
-            var magnet = 'magnet:?xt=urn:btih:' + t.info_hash + '&dn=' + encodeURIComponent(t.name) + '&tr=udp://tracker.opentrackr.org:1337/announce';
-            downloadLinks.push({ quality: quality, size: sizeMB, seeds: parseInt(t.seeders) || 0, magnet: magnet });
-          });
-        }
-      } catch (e) { console.warn('APIBay:', e); }
-    }
-
-    // No results
-    if (downloadLinks.length === 0) {
-      var epInfo = type === 'tv' ? ' S' + currentSeason + 'E' + currentEp : '';
-      optionsContainer.innerHTML = '<div style="padding:20px; text-align:center;"><div style="font-size:18px; margin-bottom:8px;">No downloads found</div><div style="color:var(--muted); font-size:13px; margin-bottom:16px;">Could not find sources for "' + title + epInfo + '"</div><a class="btn btn-primary" href="https://www.google.com/search?q=' + encodeURIComponent(title + epInfo + ' download') + '" target="_blank" style="text-decoration:none; display:inline-block; padding:10px 20px;">🔍 Search Google</a></div>';
-      return;
-    }
-
-    // Deduplicate by hash
-    var seen = {};
-    downloadLinks = downloadLinks.filter(function (l) {
-      var match = l.magnet.match(/btih:([a-fA-F0-9]+)/i);
-      var hash = match ? match[1].toLowerCase() : Math.random().toString();
-      if (seen[hash]) return false;
-      seen[hash] = true;
-      return true;
-    });
-    downloadLinks.sort(function (a, b) { return b.seeds - a.seeds; });
-
-    // Group by quality, keep best 2 per quality
-    var groups = {};
-    downloadLinks.forEach(function (l) {
-      if (!groups[l.quality]) groups[l.quality] = [];
-      if (groups[l.quality].length < 2) groups[l.quality].push(l);
-    });
-
-    var qualityOrder = ['4K', '1080p', '720p', '480p'];
-    var sorted = [];
-    qualityOrder.forEach(function (q) { if (groups[q]) sorted = sorted.concat(groups[q]); });
-
-    var epLabel = type === 'tv' ? ' — S' + currentSeason + ' E' + currentEp : '';
-    var colors = { '4K': '#7c3aed', '1080p': '#2563eb', '720p': '#0891b2', '480p': '#6b7280' };
-
-    optionsContainer.innerHTML = '<div style="text-align:left; margin-bottom:16px;"><div style="font-size:16px; font-weight:600;">' + title + epLabel + '</div><div style="font-size:12px; color:var(--muted); margin-top:4px;">' + sorted.length + ' source' + (sorted.length > 1 ? 's' : '') + ' found</div></div>' +
-      sorted.map(function (l) {
-        return '<div style="background:rgba(255,255,255,0.05); padding:14px 16px; border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(255,255,255,0.08); margin-bottom:8px;">' +
-          '<div><span style="display:inline-block; background:' + (colors[l.quality] || '#6b7280') + '; padding:3px 10px; border-radius:4px; font-size:13px; font-weight:700; color:#fff; margin-right:8px;">' + l.quality + '</span><span style="font-size:12px; color:var(--muted);">' + l.size + ' · ' + l.seeds + ' seeds</span></div>' +
-          '<div style="display:flex; gap:6px;">' +
-          '<a class="btn btn-primary" href="https://webtor.io/show?magnet=' + encodeURIComponent(l.magnet) + '" target="_blank" style="padding:7px 14px; font-size:12px; border-radius:6px; text-decoration:none; white-space:nowrap;">📥 Download (BETA)</a>' +
-          '<a class="btn btn-secondary" href="' + l.magnet + '" style="padding:7px 10px; font-size:12px; border-radius:6px; text-decoration:none; white-space:nowrap;">🧲 Magnet</a>' +
-          '</div></div>';
-      }).join('') +
-      '<div style="font-size:11px; color:var(--muted); margin-top:12px; text-align:center;">📥 Download opens WebTor (browser download, no app needed) · 🧲 Magnet opens your torrent app</div>';
+    optionsContainer.innerHTML = '<div style="text-align:left; margin-bottom:16px;"><div style="font-size:16px; font-weight:600;">' + title + epLabel + '</div><div style="font-size:12px; color:var(--muted); margin-top:4px;">Download via VidVault</div></div>' +
+      '<div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(255,255,255,0.08); margin-bottom:8px;">' +
+      '<div><span style="display:inline-block; background:#2563eb; padding:3px 10px; border-radius:4px; font-size:13px; font-weight:700; color:#fff; margin-right:8px;">VidVault</span><span style="font-size:12px; color:var(--muted);">Direct download link</span></div>' +
+      '<a class="btn btn-primary" href="' + vidvaultUrl + '" target="_blank" style="padding:10px 20px; font-size:14px; border-radius:6px; text-decoration:none; white-space:nowrap;">📥 Open VidVault</a>' +
+      '</div>' +
+      '<div style="font-size:11px; color:var(--muted); margin-top:12px; text-align:center;">VidVault provides direct download links for movies and TV shows</div>';
 
   } catch (err) {
     console.error('Download modal error:', err);
