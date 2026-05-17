@@ -242,6 +242,7 @@
 
 [data-style="new"] #view-watchlist,
 [data-style="new"] #view-search,
+[data-style="new"] #view-sports,
 [data-style="new"] #view-settings {
   padding-top: 120px !important;
 }
@@ -664,6 +665,137 @@ nav.scrolled {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.sports-hero-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  margin-right: 40px;
+  padding: 32px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(134, 0, 56, 0.95), rgba(4, 30, 66, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+.sports-hero-card h1 {
+  font-size: clamp(30px, 5vw, 56px);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.sports-hero-card p {
+  color: rgba(255,255,255,0.82);
+  max-width: 760px;
+  line-height: 1.55;
+}
+
+.sports-kicker {
+  color: #fdbb30;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.sports-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.sports-card {
+  flex: 0 0 320px;
+  min-width: 280px;
+  position: relative;
+  scroll-snap-align: start;
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 18px;
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.sports-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+}
+
+.sports-teams {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.sports-team {
+  text-align: center;
+}
+
+.sports-team img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.sports-team-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sports-vs {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.sports-status {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.1);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sports-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.sports-card-actions .btn {
+  flex: 1;
+  justify-content: center;
+  padding: 9px 10px;
+  font-size: 12px;
+}
+
+.sports-empty {
+  color: var(--muted);
+  padding: 18px;
+  background: var(--card);
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 800px) {
+  .sports-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 12px;
+    padding: 22px;
+  }
+
+  .sports-card {
+    flex-basis: 280px;
+  }
 }
 
 /* SETTINGS CARDS & FORMS */
@@ -1544,7 +1676,7 @@ nav.scrolled {
   }
 
   /* View padding adjustment */
-  #view-watchlist, #view-search, #view-settings {
+  #view-watchlist, #view-search, #view-sports, #view-settings {
     padding-top: 120px !important;
   }
 
@@ -1767,6 +1899,7 @@ nav.scrolled {
     <div class="nav-links">
       <a class="nav-link active" id="nav-home" onclick="switchView('home')">Home</a>
       <a class="nav-link" id="nav-watchlist" onclick="switchView('watchlist')">My List</a>
+      <a class="nav-link" id="nav-sports" onclick="switchView('sports')">Sports</a>
       <a class="nav-link" id="nav-settings" onclick="switchView('settings')">Settings</a>
     </div>
     <div class="nav-search">
@@ -1875,6 +2008,69 @@ nav.scrolled {
     </div>
   </div>
 
+  <!-- SPORTS VIEW -->
+  <div id="view-sports" class="view" style="padding-top: 100px;">
+    <div class="row">
+      <div class="sports-hero-card">
+        <div>
+          <div class="sports-kicker">Live sports hub</div>
+          <h1>Cleveland Cavaliers & NBA Games</h1>
+          <p>Track Cavaliers matchups first, browse upcoming NBA games, save games to your list, and open official game centers or your preferred legal streaming providers.</p>
+        </div>
+        <div class="sports-hero-actions">
+          <button class="btn btn-primary" onclick="loadSportsHome(true)">↻ Refresh Games</button>
+          <button class="btn btn-secondary" onclick="loadSportsTeam('cle')">🏀 Cavaliers</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-container sports-controls">
+      <div class="filter-bar">
+        <select id="sports-league" class="input-base" style="width:auto;" onchange="loadSportsHome(true)">
+          <option value="nba">NBA</option>
+        </select>
+        <select id="sports-team" class="input-base" style="width:auto;" onchange="loadSportsTeam(this.value)">
+          <option value="cle">Cleveland Cavaliers</option>
+          <option value="bos">Boston Celtics</option>
+          <option value="ny">New York Knicks</option>
+          <option value="mil">Milwaukee Bucks</option>
+          <option value="gs">Golden State Warriors</option>
+          <option value="lal">Los Angeles Lakers</option>
+          <option value="okc">Oklahoma City Thunder</option>
+        </select>
+        <input id="sports-search" class="input-base" placeholder="Search teams or games" oninput="filterSportsGames()" />
+      </div>
+    </div>
+
+    <div id="sports-error" class="row" style="display:none;"></div>
+
+    <div class="row">
+      <div class="row-header">
+        <h2 class="row-title">Cavaliers Games</h2>
+        <span class="see-all-link" onclick="loadSportsTeam('cle')">Reload Cavs →</span>
+      </div>
+      <div class="carousel sports-carousel" id="cavs-games-carousel">
+        <div class="sports-card skeleton-card">Loading...</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-header">
+        <h2 class="row-title">Today & Upcoming NBA</h2>
+        <span class="see-all-link" onclick="loadSportsScoreboard()">Refresh →</span>
+      </div>
+      <div class="carousel sports-carousel" id="nba-games-carousel">
+        <div class="sports-card skeleton-card">Loading...</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2 class="row-title">Saved Sports Games</h2>
+      <div class="carousel sports-carousel" id="sports-watchlist-carousel"></div>
+      <div id="sports-watchlist-empty" style="display:none; color:var(--muted); padding-left:40px;">No saved sports games yet.</div>
+    </div>
+  </div>
+
   <!-- WATCHLIST VIEW -->
   <div id="view-watchlist" class="view" style="padding-top: 100px;">
     <div class="row">
@@ -1963,6 +2159,23 @@ nav.scrolled {
           <input id="new-src-movie" class="input-base" placeholder="Movie URL ({id})" style="flex: 2;" />
           <input id="new-src-tv" class="input-base" placeholder="TV URL ({id},{s},{e})" style="flex: 2;" />
           <button class="btn btn-secondary" onclick="addCustomSource()">Add</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 style="margin: 0;">Sports Sources</h3>
+            <p style="margin: 4px 0 0 0;">Manage game-center and provider links for sports. Templates support {query}, {gamecast}, {id}, {homeTeam}, {awayTeam}, {homeAbbr}, {awayAbbr}, {homeSlug}, {awaySlug}, and {dateSlug}.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="resetSportsSources()">Reset Defaults</button>
+        </div>
+        <div class="source-list" id="sports-source-list-ui"></div>
+        <div
+          style="background:var(--bg); padding:16px; border-radius:8px; display: flex; gap: 8px; margin-top: 16px; align-items: center;">
+          <input id="new-sports-src-name" class="input-base" placeholder="Name" style="flex: 1;" />
+          <input id="new-sports-src-url" class="input-base" placeholder="Sports URL ({query},{homeTeam},{awayTeam})" style="flex: 3;" />
+          <button class="btn btn-secondary" onclick="addCustomSportsSource()">Add</button>
         </div>
       </div>
 
@@ -2193,7 +2406,42 @@ const DEFAULT_SOURCES = [
   { name: '111Movies <small style="font-size: 11px; opacity: 0.7;">(may have pop up ads)</small>', movie: 'https://111movies.net/movie/{id}?autoplay=1', tv: 'https://111movies.net/tv/{id}/{s}/{e}?autoplay=1' }
 ];
 
+const SPORTS_LEAGUES = {
+  nba: {
+    label: 'NBA',
+    sport: 'basketball',
+    league: 'nba',
+    teams: {
+      cle: 'Cleveland Cavaliers',
+      bos: 'Boston Celtics',
+      ny: 'New York Knicks',
+      mil: 'Milwaukee Bucks',
+      gs: 'Golden State Warriors',
+      lal: 'Los Angeles Lakers',
+      okc: 'Oklahoma City Thunder'
+    }
+  }
+};
+
+const NBA_TEAM_CODES = {
+  cle: 'CLE',
+  bos: 'BOS',
+  ny: 'NYK',
+  mil: 'MIL',
+  gs: 'GSW',
+  lal: 'LAL',
+  okc: 'OKC'
+};
+
+const DEFAULT_SPORTS_SOURCES = [
+  { name: 'ESPN Gamecast', url: '{gamecast}' },
+  { name: 'NBA Game Center', url: 'https://www.nba.com/game/{awaySlug}-vs-{homeSlug}-{dateSlug}' },
+  { name: 'League Pass', url: 'https://www.nba.com/watch/league-pass-stream' },
+  { name: 'YouTube TV Search', url: 'https://tv.youtube.com/search/{query}' }
+];
+
 let SOURCES = [];
+let SPORTS_SOURCES = [];
 let TMDB_KEY = localStorage.getItem('tmdb_key') || atob('OWFmMDVjYTRmNWY3Y2IwZGQ4MTE5NzA0ZTIzYjUzNDU=').split('').reverse().join('');
 let currentMedia = null, currentSrc = 0, currentSeason = 1, currentEp = 1, allSeasons = [];
 let currentModalId = null, currentModalSeasons = [];
@@ -2255,12 +2503,27 @@ function loadSources() {
     SOURCES = [...DEFAULT_SOURCES];
   }
   if (SOURCES.length === 0) SOURCES = [...DEFAULT_SOURCES];
+
+  const sportsStored = localStorage.getItem('aether_v1_sports_sources');
+  if (sportsStored) {
+    try { SPORTS_SOURCES = JSON.parse(sportsStored); } catch (e) { SPORTS_SOURCES = [...DEFAULT_SPORTS_SOURCES]; }
+  } else {
+    SPORTS_SOURCES = [...DEFAULT_SPORTS_SOURCES];
+  }
+  if (SPORTS_SOURCES.length === 0) SPORTS_SOURCES = [...DEFAULT_SPORTS_SOURCES];
+
   renderSourceSettings();
+  renderSportsSourceSettings();
 }
 
 function saveSources() {
   localStorage.setItem('aether_v4_sources', JSON.stringify(SOURCES));
   renderSourceSettings();
+}
+
+function saveSportsSources() {
+  localStorage.setItem('aether_v1_sports_sources', JSON.stringify(SPORTS_SOURCES));
+  renderSportsSourceSettings();
 }
 
 function renderSourceSettings() {
@@ -2310,6 +2573,52 @@ function resetSources() {
   saveSources();
 }
 
+function renderSportsSourceSettings() {
+  const list = document.getElementById('sports-source-list-ui');
+  if (!list) return;
+  list.innerHTML = SPORTS_SOURCES.map((src, i) => `
+    <div class="source-item">
+      <div><strong>${src.name}</strong><div style="color:var(--muted); font-size:11px; margin-top:3px; word-break:break-all;">${src.url}</div></div>
+      <div style="display:flex; gap: 12px; align-items:center; flex-shrink:0;">
+        <button class="del-btn" style="color: var(--muted); ${i === 0 ? 'opacity: 0.3; cursor: default;' : ''}" onclick="moveSportsSource(${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
+        <button class="del-btn" style="color: var(--muted); ${i === SPORTS_SOURCES.length - 1 ? 'opacity: 0.3; cursor: default;' : ''}" onclick="moveSportsSource(${i}, 1)" ${i === SPORTS_SOURCES.length - 1 ? 'disabled' : ''}>▼</button>
+        <button class="del-btn" onclick="deleteSportsSource(${i})">X</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function moveSportsSource(index, direction) {
+  if (index + direction < 0 || index + direction >= SPORTS_SOURCES.length) return;
+  const temp = SPORTS_SOURCES[index];
+  SPORTS_SOURCES[index] = SPORTS_SOURCES[index + direction];
+  SPORTS_SOURCES[index + direction] = temp;
+  saveSportsSources();
+}
+
+function addCustomSportsSource() {
+  const name = document.getElementById('new-sports-src-name').value.trim();
+  const url = document.getElementById('new-sports-src-url').value.trim();
+  if (!name || !url) return alert("Provide a name and sports URL template.");
+
+  SPORTS_SOURCES.push({ name, url });
+  saveSportsSources();
+
+  document.getElementById('new-sports-src-name').value = '';
+  document.getElementById('new-sports-src-url').value = '';
+}
+
+function deleteSportsSource(index) {
+  SPORTS_SOURCES.splice(index, 1);
+  if (SPORTS_SOURCES.length === 0) SPORTS_SOURCES = [...DEFAULT_SPORTS_SOURCES];
+  saveSportsSources();
+}
+
+function resetSportsSources() {
+  SPORTS_SOURCES = [...DEFAULT_SPORTS_SOURCES];
+  saveSportsSources();
+}
+
 /* ===== PROFILE EXPORT / IMPORT ===== */
 function exportProfile() {
   const data = {
@@ -2317,7 +2626,9 @@ function exportProfile() {
     aether_v4_sources: localStorage.getItem('aether_v4_sources'),
     aether_v2_history: localStorage.getItem('aether_v2_history'),
     aether_v2_watchlist: localStorage.getItem('aether_v2_watchlist'),
-    aether_v2_last_source: localStorage.getItem('aether_v2_last_source')
+    aether_v2_last_source: localStorage.getItem('aether_v2_last_source'),
+    aether_v2_sports_watchlist: localStorage.getItem('aether_v2_sports_watchlist'),
+    aether_v1_sports_sources: localStorage.getItem('aether_v1_sports_sources')
   };
   const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
   const a = document.createElement('a');
@@ -2339,6 +2650,8 @@ function importProfile(e) {
       if (data.aether_v2_history) localStorage.setItem('aether_v2_history', data.aether_v2_history);
       if (data.aether_v2_watchlist) localStorage.setItem('aether_v2_watchlist', data.aether_v2_watchlist);
       if (data.aether_v2_last_source) localStorage.setItem('aether_v2_last_source', data.aether_v2_last_source);
+      if (data.aether_v2_sports_watchlist) localStorage.setItem('aether_v2_sports_watchlist', data.aether_v2_sports_watchlist);
+      if (data.aether_v1_sports_sources) localStorage.setItem('aether_v1_sports_sources', data.aether_v1_sports_sources);
       alert('Profile imported successfully! Reloading...');
       window.location.reload();
     } catch (err) {
@@ -2652,6 +2965,314 @@ window.browseCategory = function(category, extra) {
 </script>
 
   
+<script>
+/* ===== SPORTS API & GAME HUB ===== */
+let sportsGames = [];
+let sportsWatchlist = [];
+let sportsLoaded = false;
+
+function sportsApiUrl(path) {
+  return `https://site.api.espn.com/apis/site/v2/sports/${path}`;
+}
+
+function nbaCdnUrl(path) {
+  return `https://cdn.nba.com/static/json/${path}`;
+}
+
+async function fetchSportsJson(url, quiet = false) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Sports request failed: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    if (!quiet) showSportsError('Unable to load sports data right now. Try refreshing in a moment.');
+    return null;
+  }
+}
+
+function showSportsError(message) {
+  const el = document.getElementById('sports-error');
+  if (!el) return;
+  el.style.display = 'block';
+  el.innerHTML = `<div class="sports-empty">${message}</div>`;
+}
+
+function clearSportsError() {
+  const el = document.getElementById('sports-error');
+  if (el) el.style.display = 'none';
+}
+
+
+function normalizeNbaGame(game) {
+  const homeTeam = game.homeTeam || {};
+  const awayTeam = game.awayTeam || {};
+  const dateValue = game.gameDateTimeUTC || game.gameTimeUTC || game.gameDateEst || game.gameDateTimeEst || game.gameDate || Date.now();
+  const date = new Date(dateValue);
+  const homeName = `${homeTeam.teamCity || ''} ${homeTeam.teamName || ''}`.trim() || homeTeam.teamTricode || 'Home';
+  const awayName = `${awayTeam.teamCity || ''} ${awayTeam.teamName || ''}`.trim() || awayTeam.teamTricode || 'Away';
+
+  return {
+    id: game.gameId,
+    name: `${awayName} at ${homeName}`,
+    shortName: `${awayTeam.teamTricode || 'AWY'} @ ${homeTeam.teamTricode || 'HME'}`,
+    date: date.toISOString(),
+    dateText: date.toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+    dateSlug: date.toISOString().slice(0, 10).replace(/-/g, ''),
+    status: game.gameStatusText || 'Scheduled',
+    isLive: game.gameStatus === 2,
+    home: {
+      name: homeName,
+      abbreviation: homeTeam.teamTricode || '',
+      slug: (homeName || 'home').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      logo: homeTeam.teamId ? `https://cdn.nba.com/logos/nba/${homeTeam.teamId}/primary/L/logo.svg` : ''
+    },
+    away: {
+      name: awayName,
+      abbreviation: awayTeam.teamTricode || '',
+      slug: (awayName || 'away').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      logo: awayTeam.teamId ? `https://cdn.nba.com/logos/nba/${awayTeam.teamId}/primary/L/logo.svg` : ''
+    },
+    links: [{ text: 'NBA Game Center', href: game.gameCode ? `https://www.nba.com/game/${game.gameCode.toLowerCase()}` : `https://www.nba.com/game/${game.gameId}` }]
+  };
+}
+
+async function fetchNbaLeagueSchedule() {
+  const candidates = [
+    nbaCdnUrl('staticData/scheduleLeagueV2.json'),
+    nbaCdnUrl('staticData/scheduleLeagueV2_1.json')
+  ];
+  for (const url of candidates) {
+    const data = await fetchSportsJson(url, true);
+    const dates = data && data.leagueSchedule && data.leagueSchedule.gameDates ? data.leagueSchedule.gameDates : [];
+    if (dates.length) return dates.flatMap(day => day.games || []).map(normalizeNbaGame);
+  }
+  return [];
+}
+
+async function fetchNbaScoreboard() {
+  const data = await fetchSportsJson(nbaCdnUrl('liveData/scoreboard/todaysScoreboard_00.json'));
+  const games = data && data.scoreboard && data.scoreboard.games ? data.scoreboard.games : [];
+  return games.map(normalizeNbaGame);
+}
+
+function normalizeEspnEvent(event) {
+  const competition = event.competitions && event.competitions[0] ? event.competitions[0] : {};
+  const competitors = competition.competitors || [];
+  const home = competitors.find(c => c.homeAway === 'home') || competitors[0] || {};
+  const away = competitors.find(c => c.homeAway === 'away') || competitors[1] || {};
+  const homeTeam = home.team || {};
+  const awayTeam = away.team || {};
+  const date = new Date(event.date || Date.now());
+  const status = event.status && event.status.type ? event.status.type : {};
+
+  return {
+    id: event.id,
+    name: event.name || `${awayTeam.displayName || 'Away'} at ${homeTeam.displayName || 'Home'}`,
+    shortName: event.shortName || `${awayTeam.abbreviation || 'AWY'} @ ${homeTeam.abbreviation || 'HME'}`,
+    date: event.date,
+    dateText: date.toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+    dateSlug: date.toISOString().slice(0, 10).replace(/-/g, ''),
+    status: status.description || status.detail || 'Scheduled',
+    isLive: status.state === 'in',
+    home: {
+      name: homeTeam.displayName || homeTeam.name || 'Home',
+      abbreviation: homeTeam.abbreviation || '',
+      slug: (homeTeam.shortDisplayName || homeTeam.name || 'home').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      logo: homeTeam.logo || ''
+    },
+    away: {
+      name: awayTeam.displayName || awayTeam.name || 'Away',
+      abbreviation: awayTeam.abbreviation || '',
+      slug: (awayTeam.shortDisplayName || awayTeam.name || 'away').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      logo: awayTeam.logo || ''
+    },
+    links: event.links || []
+  };
+}
+
+function getGamecastLink(game) {
+  const link = game.links.find(l => /gamecast/i.test(l.text || '') || /gamecast/i.test(l.rel ? l.rel.join(' ') : '')) || game.links[0];
+  return link ? link.href : `https://www.espn.com/nba/game/_/gameId/${game.id}`;
+}
+
+function buildSportsUrl(source, game) {
+  const queryText = `${game.away.name} ${game.home.name} ${game.dateText}`;
+  const query = encodeURIComponent(queryText);
+  return source.url
+    .replace(/\{gamecast\}/g, getGamecastLink(game))
+    .replace(/\{id\}/g, game.id)
+    .replace(/\{query\}/g, query)
+    .replace(/\{homeTeam\}/g, encodeURIComponent(game.home.name))
+    .replace(/\{awayTeam\}/g, encodeURIComponent(game.away.name))
+    .replace(/\{homeAbbr\}/g, encodeURIComponent(game.home.abbreviation || ''))
+    .replace(/\{awayAbbr\}/g, encodeURIComponent(game.away.abbreviation || ''))
+    .replace(/\{homeSlug\}/g, game.home.slug)
+    .replace(/\{awaySlug\}/g, game.away.slug)
+    .replace(/\{dateSlug\}/g, game.dateSlug);
+}
+
+function renderSportsCarousel(id, games) {
+  const container = document.getElementById(id);
+  if (!container) return;
+  if (!games.length) {
+    container.innerHTML = '<div class="sports-empty">No games found.</div>';
+    return;
+  }
+
+  container.innerHTML = games.map(game => {
+    const saved = sportsWatchlist.some(x => x.id === game.id);
+    return `<div class="sports-card" data-sports-game-id="${game.id}" onclick="openSportsGame('${game.id}')">
+      <span class="sports-status">${game.isLive ? '● LIVE' : game.status}</span>
+      <div style="margin-top:10px; color:var(--muted); font-size:13px;">${game.dateText}</div>
+      <div class="sports-teams">
+        <div class="sports-team">
+          ${game.away.logo ? `<img src="${game.away.logo}" alt="">` : ''}
+          <div class="sports-team-name">${game.away.name}</div>
+        </div>
+        <div class="sports-vs">@</div>
+        <div class="sports-team">
+          ${game.home.logo ? `<img src="${game.home.logo}" alt="">` : ''}
+          <div class="sports-team-name">${game.home.name}</div>
+        </div>
+      </div>
+      <div style="font-weight:700; min-height:38px;">${game.shortName}</div>
+      <div class="sports-card-actions">
+        <button class="btn btn-primary" onclick="event.stopPropagation(); openSportsGame('${game.id}')">▶ Open</button>
+        <button class="btn btn-secondary" onclick="event.stopPropagation(); toggleSportsWatchlist('${game.id}')">${saved ? '✓ Saved' : '＋ Save'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadSportsTeam(team = 'cle') {
+  clearSportsError();
+  const league = SPORTS_LEAGUES.nba;
+  const teamSelect = document.getElementById('sports-team');
+  if (teamSelect) teamSelect.value = team;
+  const container = document.getElementById('cavs-games-carousel');
+  if (container) container.innerHTML = '<div class="sports-card skeleton-card">Loading...</div>';
+
+  let events = await fetchNbaLeagueSchedule();
+  const tricode = NBA_TEAM_CODES[team] || 'CLE';
+  events = events.filter(g => g.home.abbreviation === tricode || g.away.abbreviation === tricode);
+
+  if (!events.length) {
+    const data = await fetchSportsJson(sportsApiUrl(`${league.sport}/${league.league}/teams/${team}/schedule`));
+    events = data && data.events ? data.events.map(normalizeEspnEvent) : [];
+  }
+
+  sportsGames = mergeSportsGames(sportsGames, events);
+  const upcoming = events.filter(g => new Date(g.date) >= new Date(Date.now() - 6 * 60 * 60 * 1000)).slice(0, 12);
+  renderSportsCarousel('cavs-games-carousel', upcoming.length ? upcoming : events.slice(0, 12));
+  renderSportsWatchlist();
+}
+
+async function loadSportsScoreboard() {
+  clearSportsError();
+  const league = SPORTS_LEAGUES.nba;
+  const container = document.getElementById('nba-games-carousel');
+  if (container) container.innerHTML = '<div class="sports-card skeleton-card">Loading...</div>';
+
+  let events = await fetchNbaScoreboard();
+  if (!events.length) {
+    const data = await fetchSportsJson(sportsApiUrl(`${league.sport}/${league.league}/scoreboard`));
+    events = data && data.events ? data.events.map(normalizeEspnEvent) : [];
+  }
+
+  sportsGames = mergeSportsGames(sportsGames, events);
+  renderSportsCarousel('nba-games-carousel', events.slice(0, 16));
+}
+
+function mergeSportsGames(existing, incoming) {
+  const map = new Map(existing.map(game => [game.id, game]));
+  incoming.forEach(game => map.set(game.id, game));
+  return Array.from(map.values()).sort((a, b) => new Date(a.date) - new Date(b.date));
+}
+
+async function loadSportsHome(force = false) {
+  if (sportsLoaded && !force) return;
+  sportsLoaded = true;
+  loadSportsWatchlist();
+  await Promise.all([loadSportsTeam('cle'), loadSportsScoreboard()]);
+}
+
+function filterSportsGames() {
+  const q = (document.getElementById('sports-search')?.value || '').toLowerCase().trim();
+  const team = document.getElementById('sports-team')?.value || 'cle';
+  if (!q) {
+    loadSportsTeam(team);
+    loadSportsScoreboard();
+    return;
+  }
+  const filtered = sportsGames.filter(g => `${g.name} ${g.shortName} ${g.home.name} ${g.away.name}`.toLowerCase().includes(q));
+  renderSportsCarousel('cavs-games-carousel', filtered.slice(0, 12));
+  renderSportsCarousel('nba-games-carousel', filtered.slice(12, 28));
+}
+
+function loadSportsWatchlist() {
+  try {
+    sportsWatchlist = JSON.parse(localStorage.getItem('aether_v2_sports_watchlist') || '[]') || [];
+  } catch (err) {
+    sportsWatchlist = [];
+  }
+  sportsGames = mergeSportsGames(sportsGames, sportsWatchlist);
+  renderSportsWatchlist();
+}
+
+function toggleSportsWatchlist(gameId) {
+  const game = sportsGames.find(g => g.id === gameId);
+  if (!game) return;
+  const idx = sportsWatchlist.findIndex(x => x.id === gameId);
+  if (idx >= 0) sportsWatchlist.splice(idx, 1);
+  else sportsWatchlist.unshift(game);
+  localStorage.setItem('aether_v2_sports_watchlist', JSON.stringify(sportsWatchlist));
+  renderSportsWatchlist();
+  renderSportsCarousel('cavs-games-carousel', sportsGames.filter(g => /Cavaliers|CLE/i.test(`${g.name} ${g.shortName}`)).slice(0, 12));
+  renderSportsCarousel('nba-games-carousel', sportsGames.slice(0, 16));
+}
+
+function renderSportsWatchlist() {
+  const empty = document.getElementById('sports-watchlist-empty');
+  const container = document.getElementById('sports-watchlist-carousel');
+  if (!container || !empty) return;
+  if (!sportsWatchlist.length) {
+    container.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  renderSportsCarousel('sports-watchlist-carousel', sportsWatchlist);
+}
+
+function openSportsGame(gameId, sourceIndex = 0) {
+  const game = sportsGames.find(g => g.id === gameId) || sportsWatchlist.find(g => g.id === gameId);
+  if (!game) return;
+  const sportsSources = SPORTS_SOURCES.length ? SPORTS_SOURCES : DEFAULT_SPORTS_SOURCES;
+  const source = sportsSources[sourceIndex] || sportsSources[0];
+  currentMedia = { id: game.id, type: 'sports', meta: game, sportsSourceIndex: sourceIndex };
+  document.body.style.overflow = 'hidden';
+  document.getElementById('player-overlay').classList.add('open');
+  document.getElementById('side-panel').classList.remove('open');
+  document.getElementById('panel-tv-controls').style.display = 'none';
+  document.getElementById('prev-ep-btn').style.display = 'none';
+  document.getElementById('next-ep-btn').style.display = 'none';
+  document.getElementById('download-btn').style.display = 'none';
+  document.getElementById('player-title').textContent = game.name;
+  document.title = `${game.name} — Stream Local Sports`;
+  document.getElementById('server-list').innerHTML = sportsSources.map((x, i) =>
+    `<button class="server-btn ${i === sourceIndex ? 'active' : ''}" onclick="openSportsGame('${game.id}', ${i})">${x.name}</button>`
+  ).join('') + '<p style="color:var(--muted); font-size:12px; line-height:1.4; margin-top:10px;">Sports links come from your Sports Sources settings. Availability may depend on subscriptions, location, and whether the game is live.</p>';
+  const iframe = getPlayerIframe();
+  document.getElementById('embed-loading').style.display = 'flex';
+  if (iframe) {
+    iframe.removeAttribute('sandbox');
+    iframe.src = buildSportsUrl(source, game);
+    iframe.onload = () => { document.getElementById('embed-loading').style.display = 'none'; };
+  }
+}
+
+</script>
+
 <script>
 /* ===== HOME UI & CAROUSELS ===== */
 async function loadHome() {
@@ -3104,6 +3725,7 @@ async function openMedia(id, type, inS = null, inE = null) {
   document.getElementById('player-overlay').classList.add('open');
   document.getElementById('side-panel').classList.remove('open');
   document.getElementById('player-title').textContent = "Loading...";
+  document.getElementById('download-btn').style.display = 'inline-block';
   if (getPlayerIframe()) getPlayerIframe().src = '';
   document.getElementById('embed-loading').style.display = 'flex';
 
@@ -3216,7 +3838,8 @@ function loadEmbed() {
 // If web security is disabled, we have full cross-origin access to the iframe's internals.
 const godModeTimer = setInterval(() => {
   try {
-    const frameWin = iframe.contentWindow;
+    const iframe = getPlayerIframe();
+    const frameWin = iframe ? iframe.contentWindow : null;
     if (frameWin) {
       // Attempting to access frameWin.document throws a DOMException if security is active.
       const doc = frameWin.document;
@@ -3237,7 +3860,8 @@ const godModeTimer = setInterval(() => {
 }, 1000);
 
 // Attach timer to iframe so we can clear it later if needed (optional)
-iframe._godModeTimer = godModeTimer;
+const godModeIframe = getPlayerIframe();
+if (godModeIframe) godModeIframe._godModeTimer = godModeTimer;
 function switchSource(idx) {
   currentSrc = idx;
   if (SOURCES[idx]) {
@@ -3414,6 +4038,7 @@ function switchView(view) {
   document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
   const navEl = document.getElementById('nav-' + view);
   if (navEl) navEl.classList.add('active');
+  if (view === 'sports') loadSportsHome();
 }
 
 </script>

@@ -13,9 +13,10 @@ Stream Local is a premium, highly customizable web interface for discovering and
 * **Built-in Popup Blocker:** Aggressive, multi-layered popup and redirect prevention so you can watch without interruption.
 * **Customizable UI:** Choose between Dark, Light, and "Chill" themes, alongside Classic, Glassy, or Redesign layouts.
 * **Bring Your Own Sources:** Easily add, manage, and prioritize custom third-party streaming server URLs in the settings.
-* **Personalized Watchlist:** Save your favorite shows and movies to your local list.
+* **Personalized Watchlist:** Save your favorite shows, movies, and sports games to your local list.
 * **Data Portability:** Export and import your profile (watch history, lists, API keys, and custom sources) as a JSON file.
 * **Responsive Design:** Fully optimized for desktop, tablet, and mobile viewing.
+* **Sports Game Hub:** Follow Cleveland Cavaliers games first, browse NBA matchups, manage sports source templates, and open official game centers or legal provider searches.
 
 ## 🚀 Getting Started
 
@@ -25,12 +26,13 @@ Stream Local runs entirely in your browser. No server setup or installation is r
 2. **Configure Streaming Sources (Optional):**
    * The app comes with default 3rd-party providers. You can manage these or add your own custom video server templates in the Settings menu.
 3. **Search and Watch:** Use the search bar to find content or browse the trending/popular carousels on the homepage.
+4. **Follow Sports:** Open the Sports tab for Cavaliers-first NBA schedules, saved games, and official provider links. You can also manage sports URL templates in Settings.
 
 ## ⚙️ How It Works
 
 This project is a static single-page application (SPA) contained entirely within `index.html`. It utilizes plain HTML, CSS, and Vanilla JavaScript. 
 
-* **Metadata:** Fetched via TMDB API.
+* **Metadata:** Fetched via TMDB API for films/TV and public NBA/ESPN endpoints for sports schedules and game centers.
 * **Video Playback:** Handled by dynamically embedding third-party host URLs into an iframe.
 * **Storage:** All watchlists, history, and settings are saved locally to your browser's `localStorage`.
 
